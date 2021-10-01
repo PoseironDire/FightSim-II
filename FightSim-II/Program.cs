@@ -43,13 +43,13 @@ namespace FightSim_II
             {
                 NewRound();
                 Console.WriteLine("Round " + round + ":");
-                int chance = generator.Next(1, 101);
+                int chance = generator.Next(1, 100);
 
                 Console.ReadLine();
                 Console.Clear();
             }
 
-            static void NewRound()
+            void NewRound()
             {
                 round++;
             }

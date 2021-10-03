@@ -2,10 +2,12 @@ using System;
 
 namespace FightSim_II
 {
-    public class Player
+    public class Weapon
     {
         public string name;
 
-        public int hp = 100;
+        public int chance;
+
+        public int damage;
     }
 }

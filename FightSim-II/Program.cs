@@ -14,14 +14,18 @@ namespace FightSim_II
         static int round = 0;
         static int attacker;
         static int notAttacker;
-        static string weaponChosen;
         static int useWeapon;
+        static string weaponChosen;
         static Random generator = new Random();
 
         static void Main(string[] args)
         {
             Console.Title = "Drip Arena PVP";
+            Console.ForegroundColor = ConsoleColor.DarkYellow;
+            Console.WriteLine("--- Welcome to Drip Arena PVP! ---");
+            Console.ForegroundColor = ConsoleColor.White;
 
+            //Choose what player goes first 
             attacker = generator.Next(2);
             notAttacker = attacker + 1;
 
@@ -31,12 +35,10 @@ namespace FightSim_II
             weapons[2].name = "Launcher";
             weapons[3].name = "Frag";
 
-            //Players choose their names
-            Console.ForegroundColor = ConsoleColor.DarkYellow;
-            Console.WriteLine("--- Welcome to Drip Arena PVP! ---");
-            Console.ForegroundColor = ConsoleColor.White;
+            //Choose name for player1
             Console.WriteLine("Choose name for Player 1:");
             players[0].name = Console.ReadLine();
+            //If blank call player1 "Player1"
             if (players[0].name == "" || players[0].name == " ")
             {
                 players[0].name = "Player 1";
@@ -44,8 +46,10 @@ namespace FightSim_II
             Console.ForegroundColor = ConsoleColor.Green;
             Console.WriteLine("Player 1's name is: '" + players[0].name + "'");
             Console.ForegroundColor = ConsoleColor.White;
+            //Choose name for player2
             Console.WriteLine("Choose name for Player 2");
             players[1].name = Console.ReadLine();
+            //If blank call player2 "Player2"
             if (players[1].name == "" || players[1].name == " ")
             {
                 players[1].name = "Player 2";
@@ -56,37 +60,39 @@ namespace FightSim_II
             Console.ReadLine();
             Console.Clear();
 
-            //Loops while both player's HP are above 0
-            while (players[0].hp > 0 && players[1].hp > 0)
+            //Loops while both player's Hp are above 0
+            while (players[0].Hp > 0 && players[1].Hp > 0)
             {
-                //Start new round
+                //Start new Round
                 NewRound();
-
+                //Show stats
                 Status();
-
-                for (int i = 0; i < players.Length; i++)
+                //Repeat these methods for each player
+                foreach (var item in players)
                 {
+                    //Decide who's turn it is
                     Turn();
-
+                    //Let a player decide what weapon they want to use 
                     WeaponChoose();
-
+                    //Initiate Attack
                     Attack();
-
+                    //Show stats again
                     Status();
                 }
+                //Clear everything for next Round
                 Console.Clear();
             }
             //Ending results
             Console.ForegroundColor = ConsoleColor.Green;
-            if (players[0].hp <= 0)
+            if (players[0].Hp <= 0)
             {
                 Console.WriteLine(players[1].name + " won!");
             }
-            else if (players[1].hp <= 0)
+            else if (players[1].Hp <= 0)
             {
                 Console.WriteLine(players[0].name + " won!");
             }
-            else if (players[1].hp <= 0 && players[0].hp <= 0)
+            else if (players[1].Hp <= 0 && players[0].Hp <= 0)
             {
                 Console.ForegroundColor = ConsoleColor.Yellow;
                 Console.WriteLine("Draw!");
@@ -108,8 +114,8 @@ namespace FightSim_II
         static void Status()
         {
             Console.ForegroundColor = ConsoleColor.DarkCyan;
-            Console.WriteLine(players[0].name + "'s HP: " + players[0].hp);
-            Console.WriteLine(players[1].name + "'s HP: " + players[1].hp);
+            Console.WriteLine(players[0].name + "'s Hp: " + players[0].Hp);
+            Console.WriteLine(players[1].name + "'s Hp: " + players[1].Hp);
             Console.ForegroundColor = ConsoleColor.White;
             Console.ReadLine();
         }
@@ -205,7 +211,7 @@ namespace FightSim_II
             Console.ForegroundColor = ConsoleColor.Red;
             if (weapons[useWeapon].chance == 0)
             {
-                players[notAttacker].hp -= weapons[useWeapon].damage;
+                players[notAttacker].Hp -= weapons[useWeapon].damage;
                 Console.WriteLine(players[notAttacker].name + " took " + weapons[useWeapon].damage + "!");
                 Console.ForegroundColor = ConsoleColor.White;
             }

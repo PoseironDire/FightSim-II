@@ -14,7 +14,8 @@ namespace FightSim_II
         static int round = 0;
         static int attacker;
         static int notAttacker;
-        static int useWeapon;
+        static bool battle;
+        static int[] useWeapon = new int[players.Length];
         static string weaponChosen;
         static Random generator = new Random();
 
@@ -28,6 +29,7 @@ namespace FightSim_II
             //Choose what player goes first 
             attacker = generator.Next(2);
             notAttacker = attacker + 1;
+
 
             //Weapon Name
             weapons[0].name = "Sword";
@@ -67,28 +69,38 @@ namespace FightSim_II
                 NewRound();
                 //Show stats
                 Status();
-                //Repeat these methods for each player
+                //Repeat these two methods for each player so they may select a weapon
                 foreach (var item in players)
                 {
                     //Decide who's turn it is
                     Turn();
                     //Let a player decide what weapon they want to use 
                     WeaponChoose();
+                }
+                //Repeat these two methods for each player so they Attack simultaneously
+                foreach (var item in players)
+                {
+                    //Start Battle
+                    battle = true;
+                    //Decide who's turn it is
+                    Turn();
                     //Initiate Attack
                     Attack();
-                    //Show stats again
-                    Status();
+                    //End Battle
+                    battle = false;
                 }
+                //Show stats again
+                Status();
                 //Clear everything for next Round
                 Console.Clear();
             }
-            //Ending results
+            //After a player's Hp reaches 0 show what player won
             Console.ForegroundColor = ConsoleColor.Green;
-            if (players[0].Hp <= 0)
+            if (players[0].Hp <= 0 && players[1].Hp > 0)
             {
                 Console.WriteLine(players[1].name + " won!");
             }
-            else if (players[1].Hp <= 0)
+            else if (players[1].Hp <= 0 && players[0].Hp > 0)
             {
                 Console.WriteLine(players[0].name + " won!");
             }
@@ -134,8 +146,16 @@ namespace FightSim_II
             {
                 notAttacker = 0;
             }
-            Console.ForegroundColor = ConsoleColor.DarkYellow;
-            Console.WriteLine(players[attacker].name + "'s turn:");
+            if (!battle)
+            {
+                Console.ForegroundColor = ConsoleColor.DarkYellow;
+                Console.WriteLine(players[attacker].name + "'s turn:");
+            }
+            else
+            {
+                Console.ForegroundColor = ConsoleColor.DarkCyan;
+                Console.WriteLine(players[attacker].name + "'s Attack:");
+            }
             Console.ForegroundColor = ConsoleColor.White;
 
         }
@@ -170,35 +190,35 @@ namespace FightSim_II
                 Console.ForegroundColor = ConsoleColor.Green;
                 Console.WriteLine(players[attacker].name + " chose " + weapons[0].name + "!");
                 Console.ForegroundColor = ConsoleColor.White;
-                useWeapon = 0;
+                useWeapon[attacker] = 0;
             }
             else if (weaponChosen == "2" || weaponChosen == "2." || weaponChosen == "gun")
             {
                 Console.ForegroundColor = ConsoleColor.Green;
                 Console.WriteLine(players[attacker].name + " chose " + weapons[1].name + "!");
                 Console.ForegroundColor = ConsoleColor.White;
-                useWeapon = 1;
+                useWeapon[attacker] = 1;
             }
             else if (weaponChosen == "3" || weaponChosen == "3." || weaponChosen == "launcher")
             {
                 Console.ForegroundColor = ConsoleColor.Green;
                 Console.WriteLine(players[attacker].name + " chose " + weapons[2].name + "!");
                 Console.ForegroundColor = ConsoleColor.White;
-                useWeapon = 2;
+                useWeapon[attacker] = 2;
             }
             else if (weaponChosen == "4" || weaponChosen == "4." || weaponChosen == "frag")
             {
                 Console.ForegroundColor = ConsoleColor.Green;
                 Console.WriteLine(players[attacker].name + " chose " + weapons[3].name + "!");
                 Console.ForegroundColor = ConsoleColor.White;
-                useWeapon = 3;
+                useWeapon[attacker] = 3;
             }
             else
             {
                 //If answer is something else, select Sword (value of 1)
-                useWeapon = generator.Next(4);
+                useWeapon[attacker] = generator.Next(4);
                 Console.ForegroundColor = ConsoleColor.DarkYellow;
-                Console.WriteLine("Invalid choice! " + weapons[useWeapon].name + " was chosen for " + players[attacker].name + "!");
+                Console.WriteLine("Invalid choice! " + weapons[useWeapon[attacker]].name + " was chosen for " + players[attacker].name + "!");
                 Console.ForegroundColor = ConsoleColor.White;
             }
             Console.ReadLine();
@@ -209,17 +229,18 @@ namespace FightSim_II
         {
             //Check for chosen weapon
             Console.ForegroundColor = ConsoleColor.Red;
-            if (weapons[useWeapon].chance == 0)
+            if (weapons[useWeapon[attacker]].chance == 0)
             {
-                players[notAttacker].Hp -= weapons[useWeapon].damage;
-                Console.WriteLine(players[notAttacker].name + " took " + weapons[useWeapon].damage + "!");
+                players[notAttacker].Hp -= weapons[useWeapon[attacker]].damage;
+                Console.WriteLine("Dealt: " + weapons[useWeapon[attacker]].damage + "!");
+                Console.WriteLine(players[notAttacker].name + " took " + weapons[useWeapon[attacker]].damage + "!");
                 Console.ForegroundColor = ConsoleColor.White;
             }
             else
             {
                 //If the chances are != 0 the Attack will miss
                 Console.ForegroundColor = ConsoleColor.DarkYellow;
-                Console.WriteLine(players[attacker].name + " missed!");
+                Console.WriteLine("Missed!");
                 Console.ForegroundColor = ConsoleColor.White;
             }
         }
